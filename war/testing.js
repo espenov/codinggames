@@ -39,8 +39,8 @@ var readlines = getInput('war/input.txt');
     deckB.push(s.substr(0,s.length-1));
 }
 
-deckA.reverse();
-deckB.reverse();
+//deckA.reverse();
+//deckB.reverse();
 
  // Write an action using print()
  // To debug: printErr('Debug messages...');
@@ -50,59 +50,59 @@ deckB.reverse();
  while (deckA.length>0 && deckB.length>0){
     // play card
     rounds +=1;
-    cardA = deckA.pop();
-    deckA_playedcards.push(cardA);
+    cardA = deckA.shift(); //take the first card
+    deckA_playedcards.push(cardA); //add to back of the played list
 
-    cardB = deckB.pop();
-    deckB_playedcards.push(cardB);
-
-//    printErr(deckA.toString()+':'+cardA);
-//    printErr(deckB.toString()+':'+cardB);
-    printErr(cardA+':'+deckA.reverse().toString());
-    printErr(cardB+':'+deckB.reverse().toString());
+    cardB = deckB.shift();  //take the first card
+    deckB_playedcards.push(cardB); //add to back of the played list
 
     
     if (evalCard(cardA)>evalCard(cardB) ) {// A wins the card
         // first move player 1 cards to the deck
-        deckA = deckA_playedcards.splice(0,deckA_playedcards.length).concat(deckA);
+        deckA = deckA.concat(deckA_playedcards);
+        deckA_playedcards = [];
         // then the won cards
-        deckA = deckB_playedcards.splice(0,deckB_playedcards.length).concat(deckA);
-        print('A wins');
+        deckA = deckA.concat(deckB_playedcards);
+        deckB_playedcards = [];
+     //   printErr('A wins');
     }
     else if (evalCard(cardA)<evalCard(cardB) ) {// B wins the card
         // first move player 1 cards to the deck
-        deckB = deckA_playedcards.splice(0,deckA_playedcards.length).concat(deckB);
-        // first move your own cards to the deck
-        deckB = deckB_playedcards.splice(0,deckB_playedcards.length).concat(deckB);
-        print('B wins');
+        deckB = deckB.concat(deckA_playedcards);
+        deckA_playedcards = [];
+        // then the won cards
+        deckB = deckB.concat(deckB_playedcards);
+        deckB_playedcards = [];
+      //  printErr('B wins');
     }
     else {
         // War: move 3 card to the playedcard deck
-        deckA_playedcards = deckA_playedcards.concat(deckA.splice(deckA.length-3,deckA.length).reverse());
-        deckB_playedcards = deckB_playedcards.concat(deckB.splice(deckB.length-3,deckB.length).reverse());
+        deckA_playedcards = deckA_playedcards.concat(deckA.splice(0,3));
+        deckB_playedcards = deckB_playedcards.concat(deckB.splice(0,3));
         // Out of cards during war = PAT
         if (deckA.length==0||deckB.length==0) {
             winner = 'PAT';
             break;
         }
         rounds -=1;
-        printErr('War');
+       // printErr('War');
     }
-    printErr('A:'+cardA+':'+deckA.reverse().toString());
-    printErr('B:'+cardB+':'+deckB.reverse().toString());
-    printErr('Ap:' + deckA_playedcards.reverse().toString());
-    printErr('Bp:' + deckB_playedcards.reverse().toString());
+    /*
+  //  printErr('A:'+cardA+':'+deckA.toString());
+  //  printErr('B:'+cardB+':'+deckB.toString());
+  //  printErr('Ap:' + deckA_playedcards.toString());
+  //  printErr('Bp:' + deckB_playedcards.toString());
     
-    printErr(rounds);
+ //   printErr(rounds);
     
 
     if (rounds%10==0)
         printErr(rounds);
     printErr('-----------');
-    
+    */
 }
 
-if (deckA.length==0) winner = '2 ' + rounds;
-if (deckB.length==0) winner = '1 ' + rounds;
+if (deckA.length==0 && winner!='PAT') winner = '2 ' + rounds;
+if (deckB.length==0 && winner!='PAT') winner = '1 ' + rounds;
     
 print(winner);
